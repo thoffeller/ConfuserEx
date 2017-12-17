@@ -152,10 +152,6 @@ namespace Confuser.Renamer {
 			else if (type.IsRuntimeSpecialName || type.IsGlobalModuleType) {
 				service.SetCanRename(type, false);
 			}
-			else if (type.FullName == "ConfusedByAttribute") {
-				// Courtesy
-				service.SetCanRename(type, false);
-			}
 
 			/*
 			 * Can't rename Classes/Types that will be serialized

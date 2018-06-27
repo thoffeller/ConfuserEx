@@ -7,7 +7,9 @@ namespace Confuser.Runtime
 {
 	internal static unsafe class AntiTamperJIT
     {
-		static uint* ptr;
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern IntPtr GetModuleHandle(string lpModuleName);
+        static uint* ptr;
 		static uint len;
 		static IntPtr moduleHnd;
 		static compileMethod originalDelegate;
@@ -76,14 +78,15 @@ namespace Confuser.Runtime
 
 			ver4 = Environment.Version.Major == 4;
 			ModuleHandle hnd = m.ModuleHandle;
-			if (ver4) {
-				ulong* str = stackalloc ulong[1];
-				str[0] = 0x0061746144705f6d; //m_pData.
-				moduleHnd = (IntPtr)m.GetType().GetField(new string((sbyte*)str), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(m);
-				ver5 = Environment.Version.Revision > 17020;
-			}
-			else
-				moduleHnd = *(IntPtr*)(&hnd);
+            if (ver4)
+            {
+                ulong* str = stackalloc ulong[1];
+                str[0] = 0x0061746144705f6d; //m_pData.
+                moduleHnd = (IntPtr)m.GetType().GetField(new string((sbyte*)str), BindingFlags.NonPublic | BindingFlags.Instance).GetValue(m);
+                ver5 = Environment.Version.Revision > 17020;
+            }
+            else
+                moduleHnd = GetModuleHandle(m.Name);
 
 			Hook();
 		}

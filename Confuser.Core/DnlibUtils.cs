@@ -243,6 +243,12 @@ namespace Confuser.Core {
 		}
 
 		static void FindTypeRefsInternal(TypeSig typeSig, IList<ITypeDefOrRef> ret) {
+            if (typeSig == null)
+                return;
+
+            if (ret == null)
+                ret = new List<ITypeDefOrRef>();
+
 			while (typeSig.Next != null) {
 				if (typeSig is ModifierSig)
 					ret.Add(((ModifierSig)typeSig).Modifier);
